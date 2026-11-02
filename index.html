@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Treino em Casa</title>
-<meta name="theme-color" content="#161826">
+<meta name="theme-color" content="#111a16">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,13 +15,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
-/* Mesmo visual do app Habilitação Operacional: fundo azul-noite, cartões arredondados, destaque lilás, menu fixo embaixo */
+/* Mesmo visual do app Habilitação Operacional: fundo verde-escuro, cartões arredondados, destaque verde, menu fixo embaixo */
 :root{
-  --bg:#161826; --card:#1b1d2b; --card-2:#232532; --line:#2b2d3a; --line-2:#3f424d;
-  --ink:#e9e9ed; --soft:#cfd3e5; --muted:#9397ab; --dim:#75798c;
-  --accent:#b5abfc; --accent-2:#d2cefd; --accent-bg:#2b2741; --accent-line:#5d5294;
-  --ok:#8fd3a8; --ok-bg:#1f3329; --warn:#e0a06b; --warn-bg:#33251d;
-  --weight:#e0a06b; --fig:#e9e9ed; --fig-far:#595d6c; --tile:#232532; --floor:#3f424d; --mat:#2b2741;
+  --bg:#111a16; --card:#16211c; --card-2:#1d2a24; --line:#25332c; --line-2:#33453c;
+  --ink:#e7f0eb; --soft:#c8dbd0; --muted:#8ea398; --dim:#6c8177;
+  --accent:#5fd99c; --accent-2:#a8f0c8; --accent-bg:#183327; --accent-line:#2e6b4e;
+  --ok:#a3e07a; --ok-bg:#22331b; --warn:#e0a06b; --warn-bg:#33251d;
+  --weight:#e0a06b; --fig:#e7f0eb; --fig-far:#4f6359; --tile:#1d2a24; --floor:#33453c; --mat:#183327;
   --font:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:dark;
 }
@@ -65,7 +65,7 @@ button{cursor:pointer}
 .trio b{font-size:1.15rem;font-weight:500}
 
 .btn{border:1px solid var(--line-2);background:var(--card-2);border-radius:12px;padding:10px 14px;font-weight:600;font-size:.9rem}
-.btn.primary{background:var(--accent);color:#1b1d2b;border-color:var(--accent);width:100%;padding:14px;font-size:1rem}
+.btn.primary{background:var(--accent);color:#0d1a13;border-color:var(--accent);width:100%;padding:14px;font-size:1rem}
 .btn.ghost{background:transparent}
 .btn:active{transform:scale(.98)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -74,10 +74,10 @@ button{cursor:pointer}
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:12px}
 .wd{border-radius:12px;padding:8px 2px;text-align:center;background:var(--card-2);border:1px solid var(--line);min-width:0}
 .wd b{display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase}
-.wd i{display:block;font-style:normal;font-size:.62rem;color:var(--dim);margin-top:3px;line-height:1.15;overflow-wrap:anywhere}
+.wd i{display:block;font-style:normal;font-size:.62rem;color:var(--dim);margin-top:3px;line-height:1.15;overflow-wrap:normal;word-break:keep-all;hyphens:none}
 .wd.train i{color:var(--soft)}
 .wd.today{border-color:var(--accent)}
-.wd.ok{background:var(--ok-bg);border-color:#2f5a44}
+.wd.ok{background:var(--ok-bg);border-color:#3d6630}
 .wd.ok i{color:var(--ok)}
 
 /* treino */
@@ -86,7 +86,7 @@ button{cursor:pointer}
 .chip small{display:block;font-size:.68rem;color:var(--muted);font-weight:500}
 .chip[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-2)}
 .ex{display:grid;grid-template-columns:112px minmax(0,1fr);gap:14px;align-items:start}
-.ex.done{border-color:#2f5a44}
+.ex.done{border-color:#3d6630}
 .fig{width:100%;aspect-ratio:6/5;background:var(--tile);border-radius:12px;display:block}
 .exb{display:flex;flex-direction:column;gap:5px;min-width:0}
 .exb h3{font-size:1rem;font-weight:600}
@@ -96,7 +96,7 @@ button{cursor:pointer}
 .tip{font-size:.82rem;color:var(--muted)}
 .sets{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .set{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line-2);background:transparent;font-size:.8rem;font-weight:600;color:var(--muted)}
-.set.on{background:var(--ok);border-color:var(--ok);color:#16261d}
+.set.on{background:var(--ok);border-color:var(--ok);color:#13210d}
 .exrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
 .exrow .btn{padding:6px 10px;font-size:.8rem;border-radius:10px}
 .kg{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
@@ -108,7 +108,7 @@ input.num{width:60px;background:var(--bg);border:1px solid var(--line-2);border-
 .chk:last-child{border-bottom:0}
 .box{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line-2);display:grid;place-items:center;flex:none;background:transparent}
 .box svg{width:16px;height:16px;opacity:0}
-.chk.on .box{background:var(--ok);border-color:var(--ok);color:#16261d}
+.chk.on .box{background:var(--ok);border-color:var(--ok);color:#13210d}
 .chk.on .box svg{opacity:1}
 .chk.on span{color:var(--muted);text-decoration:line-through}
 .bar{height:6px;border-radius:9px;background:var(--card-2);overflow:hidden;margin-top:10px}
@@ -129,7 +129,7 @@ ul.list{display:flex;flex-direction:column;gap:10px;padding-left:18px;color:var(
 ul.list b{color:var(--ink)}
 
 /* menu inferior */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(22,24,38,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(17,26,22,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
   padding:8px max(8px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
 nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 nav.tabs button{border:1px solid transparent;background:transparent;border-radius:14px;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}
@@ -143,11 +143,33 @@ nav.tabs button[aria-current="page"]{background:var(--accent-bg);border-color:va
 .timer.end .in{border-color:var(--ok)}
 .timer.end b{color:var(--ok)}
 .timer .btn{padding:6px 10px;font-size:.8rem}
+/* aviso de confirmação */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(5,10,8,.7);display:flex;align-items:flex-end;justify-content:center;
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal .sheet{width:100%;max-width:520px;background:var(--card);border:1px solid var(--warn);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;max-height:85vh;overflow:auto}
+.modal h2{font-size:1.15rem;font-weight:600}
+.modal ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.modal li{display:flex;justify-content:space-between;gap:10px;font-size:.88rem;border-bottom:1px solid var(--line);padding-bottom:6px}
+.modal li b{color:var(--warn);font-weight:600;white-space:nowrap}
+.modal .acts{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+@media (min-width:600px){.modal{align-items:center}}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mtitle"><div class="sheet">
+  <div class="label" style="color:var(--warn)">Atenção</div>
+  <h2 id="mtitle">Ainda faltam séries</h2>
+  <p class="small muted" id="mtext"></p>
+  <ul id="mlist"></ul>
+  <p class="small">Tem certeza de que concluiu tudo?</p>
+  <div class="acts">
+    <button class="btn primary" id="myes" type="button">Sim, concluí tudo</button>
+    <button class="btn" id="mno" type="button">Não, voltar ao treino</button>
+  </div>
+</div></div>
 
 <div class="timer" id="timer" hidden><div class="in">
   <span class="small muted">Descanso</span><b id="tleft">1:30</b>
@@ -159,26 +181,26 @@ nav.tabs button[aria-current="page"]{background:var(--accent-bg);border-color:va
 
 <script>
 const DAYS = [
-  {id:'d1', curto:'Pernas A', titulo:'Pernas e glúteos A', foco:'Foco em quadríceps e glúteos', dia:'Segunda', wd:1, itens:[
+  {id:'d1', curto:'Pernas A', mini:'Pernas A', titulo:'Pernas e glúteos A', foco:'Foco em quadríceps e glúteos', dia:'Segunda', wd:1, itens:[
     ['goblet','Agachamento com halter','4 séries de 15 repetições',4,'Segure o peso junto ao peito e desça controladamente, em 3 segundos.',90,'Os dois halteres de 5 kg juntos (10 kg)'],
     ['afundo','Afundo com halteres','3 séries de 10–12 por perna',3,'Mantenha o tronco firme e desça sem pressa.',90,'Um halter de 5 kg em cada mão'],
     ['sumo','Agachamento sumô','3 séries de 15–20 repetições',3,'Pés afastados e pontas levemente para fora. Pare 1 segundo embaixo.',90,'Os dois halteres de 5 kg juntos (10 kg)'],
     ['pontePeso','Elevação de quadril com peso','4 séries de 15–20 repetições',4,'Contraia os glúteos no alto e segure 2 segundos.',90,'Os dois halteres de 5 kg sobre o quadril (10 kg)'],
     ['extensao','Extensão de joelho com caneleira','3 séries de 15 por perna',3,'Estenda o joelho sem dar impulso e segure 2 segundos lá em cima.',60,'Caneleira de 3 kg']]},
-  {id:'d2', curto:'Superior', titulo:'Braços, costas, ombros e abdômen', foco:'Foco em membros superiores', dia:'Terça', wd:2, itens:[
+  {id:'d2', curto:'Superior', mini:'Braços', titulo:'Braços, costas, ombros e abdômen', foco:'Foco em membros superiores', dia:'Terça', wd:2, itens:[
     ['remada','Remada curvada','3 séries de 12–15 repetições',3,'Tronco inclinado e costas retas; puxe os cotovelos para trás.',90,'Um halter de 5 kg em cada mão'],
     ['desenv','Desenvolvimento de ombros','3 séries de 12 repetições',3,'Empurre os halteres para cima sem arquear a lombar.',90,'5 kg em cada mão (use 3 kg se não completar as 12)'],
     ['rosca','Rosca bíceps','3 séries de 12 repetições',3,'Cotovelos colados ao corpo, sem balançar o tronco.',60,'Um halter de 5 kg em cada mão'],
     ['frances','Tríceps francês','3 séries de 12–15 repetições',3,'Cotovelos apontados para cima; mova só o antebraço.',60,'Um halter de 5 kg segurado com as duas mãos'],
     ['lateral','Elevação lateral','3 séries de 12–15 repetições',3,'Suba os braços até a altura dos ombros, devagar.',60,'Um halter de 3 kg em cada mão'],
     ['prancha','Prancha abdominal','3 séries de 30–40 segundos',3,'Corpo em linha reta, abdômen e glúteos contraídos.',60,'Sem peso']]},
-  {id:'d3', curto:'Pernas B', titulo:'Pernas e glúteos B', foco:'Foco em posterior e glúteos', dia:'Quinta', wd:4, itens:[
+  {id:'d3', curto:'Pernas B', mini:'Pernas B', titulo:'Pernas e glúteos B', foco:'Foco em posterior e glúteos', dia:'Quinta', wd:4, itens:[
     ['stiff','Stiff com halteres','4 séries de 12–15 repetições',4,'Leve o quadril para trás, mantendo a coluna neutra. Desça em 3 segundos.',90,'Um halter de 5 kg em cada mão'],
     ['bulgaro','Agachamento búlgaro','3 séries de 10 por perna',3,'Use uma cadeira firme para apoiar o pé de trás.',90,'3 kg em cada mão; passe para 5 kg quando ficar fácil'],
     ['coice','Coice de glúteo com caneleira','3 séries de 15–20 por perna',3,'Suba a perna sem arquear a lombar e segure 1 segundo no alto.',60,'Caneleira de 3 kg'],
     ['abducao','Abdução de quadril com caneleira','3 séries de 15–20 por perna',3,'Deitada de lado, suba a perna de cima com controle.',60,'Caneleira de 3 kg'],
     ['ponte','Elevação de quadril','3 séries de 20 repetições',3,'Contraia os glúteos no alto, segure 2 segundos e desça devagar.',60,'Sem peso']]},
-  {id:'d4', curto:'Corpo todo', titulo:'Corpo todo + abdômen', foco:'Foco em fortalecimento geral', dia:'Sábado', wd:6, itens:[
+  {id:'d4', curto:'Corpo todo', mini:'Corpo todo', titulo:'Corpo todo + abdômen', foco:'Foco em fortalecimento geral', dia:'Sábado', wd:6, itens:[
     ['agdesenv','Agachamento com desenvolvimento','3 séries de 12 repetições',3,'Ao subir do agachamento, empurre os halteres para cima.',90,'Um halter de 3 kg em cada mão'],
     ['stiff','Stiff com halteres','3 séries de 12–15 repetições',3,'Leve o quadril para trás, mantendo a coluna neutra.',90,'Um halter de 5 kg em cada mão'],
     ['remada1','Remada com halteres','3 séries de 12–15 por braço',3,'Puxe o halter em direção ao quadril.',90,'Um halter de 5 kg'],
@@ -364,7 +386,7 @@ function header(title){
 }
 function weekStrip(){
   return `<div class="week">${[1,2,3,4,5,6,0].map(i=>{const d=DAYS.find(x=>x.wd===i);
-    return `<div class="wd${d?' train':''}${today.getDay()===i?' today':''}${d&&cw()[d.id]?' ok':''}"><b>${NOMES_SEMANA[i]}</b><i>${d?d.curto:'Folga'}</i></div>`;}).join('')}</div>`;
+    return `<div class="wd${d?' train':''}${today.getDay()===i?' today':''}${d&&cw()[d.id]?' ok':''}"><b>${NOMES_SEMANA[i]}</b><i>${d?d.mini:'Folga'}</i></div>`;}).join('')}</div>`;
 }
 function painel(){
   const n=doneCount(), C=2*Math.PI*84, td=todayDay();
@@ -383,7 +405,7 @@ function painel(){
       <div><span class="eyebrow">Programa</span><b>S${st.semana}/4</b></div>
       <div><span class="eyebrow">Meta</span><b>4 dias</b></div></div>
   </div>
-  ${td&&cw()[td.id]?`<div class="card" style="border-color:#2f5a44"><div class="label" style="color:var(--ok)">${ico('check','style="color:var(--ok)"')}Treino de hoje concluído</div><p class="small muted" style="margin-top:6px">Boa! Descanse e se alimente bem.</p></div>`:''}
+  ${td&&cw()[td.id]?`<div class="card" style="border-color:#3d6630"><div class="label" style="color:var(--ok)">${ico('check','style="color:var(--ok)"')}Treino de hoje concluído</div><p class="small muted" style="margin-top:6px">Boa! Descanse e se alimente bem.</p></div>`:''}
   ${!td?`<div class="card warn"><h2>Hoje é dia de descanso</h2><p class="small muted" style="margin-top:4px">A recuperação faz parte do ganho de massa.</p></div>`:''}
   <div class="card accent">
     <div class="label">${ico('treino')}Próximo treino · ${prox.txt}</div>
@@ -411,7 +433,7 @@ function treino(){
         <div class="exrow"><button type="button" class="btn rest" data-r="${rest}">Descanso ${fmt(rest)}</button>
           <label class="kg">Carga S${st.semana}<input class="num" type="text" inputmode="decimal" placeholder="kg" value="${c}" data-sk="${sk}"></label></div>
       </div></article>`;}).join('')}
-  <button class="btn primary" id="fin" type="button" ${feito?'style="background:var(--ok);border-color:var(--ok);color:#16261d"':''}>${feito?'Treino concluído ✓ (toque para desfazer)':'Concluir treino de '+d.dia.toLowerCase()}</button>`;
+  <button class="btn primary" id="fin" type="button" ${feito?'style="background:var(--ok);border-color:var(--ok);color:#13210d"':''}>${feito?'Treino concluído ✓ (toque para desfazer)':'Concluir treino de '+d.dia.toLowerCase()}</button>`;
 }
 function bindTreino(){
   document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{st.dia=b.dataset.d;save();render();});
@@ -423,8 +445,21 @@ function bindTreino(){
     if(arr[s]&&s<n-1)startTimer(+b.dataset.r);});
   document.querySelectorAll('.rest').forEach(b=>b.onclick=()=>startTimer(+b.dataset.r));
   document.querySelectorAll('input.num').forEach(inp=>inp.oninput=()=>{setCarga(inp.dataset.sk,st.semana,inp.value);});
-  $('fin').onclick=()=>{setCheck(st.dia,!cw()[st.dia]);render();};
+  $('fin').onclick=()=>{
+    if(cw()[st.dia]){setCheck(st.dia,false);render();return;}
+    const d=DAYS.find(x=>x.id===st.dia);
+    const falta=d.itens.map(([,nome,,n],i)=>({nome,n,feitas:(st.series[d.id+'-'+i]||[]).filter(Boolean).length})).filter(x=>x.feitas<x.n);
+    if(!falta.length){concluir(d);return;}
+    const total=falta.reduce((a,x)=>a+(x.n-x.feitas),0), semNada=falta.filter(x=>x.feitas===0).length;
+    $('mtext').textContent=`Faltam ${total} ${total===1?'série':'séries'} em ${falta.length} ${falta.length===1?'exercício':'exercícios'}`+(semNada?` (${semNada} sem nenhuma série marcada)`:'')+':';
+    $('mlist').innerHTML='';
+    falta.forEach(x=>{const li=document.createElement('li'),a=document.createElement('span'),b=document.createElement('b');
+      a.textContent=x.nome;b.textContent=`${x.feitas} de ${x.n} séries`;li.append(a,b);$('mlist').appendChild(li);});
+    $('modal').hidden=false; $('mno').focus();
+    $('myes').onclick=()=>{$('modal').hidden=true;d.itens.forEach((it,i)=>{st.series[d.id+'-'+i]=Array(it[3]).fill(true);});concluir(d);};
+  };
 }
+function concluir(d){setCheck(d.id,true);render();window.scrollTo(0,0);}
 function semana(){
   const n=doneCount();
   return header('Semana')+`
@@ -487,6 +522,9 @@ function startTimer(s){tLeft=s;$('timer').hidden=false;$('timer').classList.remo
   tInt=setInterval(()=>{tLeft--;showT();if(tLeft<=0){clearInterval(tInt);$('timer').classList.add('end');$('tleft').textContent='Bora!';
     try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}}},1000);}
 function showT(){$('tleft').textContent=fmt(Math.max(0,tLeft));}
+$('mno').onclick=()=>{$('modal').hidden=true;};
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').hidden=true;});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').hidden=true;});
 $('tplus').onclick=()=>{if(tLeft<=0)startTimer(15);else{tLeft+=15;showT();}};
 $('tstop').onclick=()=>{clearInterval(tInt);$('timer').hidden=true;};
 
