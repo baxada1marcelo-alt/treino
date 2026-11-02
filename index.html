@@ -103,6 +103,14 @@ button{cursor:pointer}
 input.num{width:60px;background:var(--bg);border:1px solid var(--line-2);border-radius:8px;padding:6px 8px;font-size:.9rem;font-variant-numeric:tabular-nums}
 @media (max-width:400px){.ex{grid-template-columns:96px minmax(0,1fr);gap:12px}}
 
+/* montar semana */
+.plan{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.prow{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;align-items:center}
+.prow b{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase}
+.popts{display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:4px}
+.popts button{border:1px solid var(--line-2);background:var(--card-2);border-radius:9px;padding:8px 0;font-size:.78rem;font-weight:600;color:var(--muted)}
+.popts button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-2)}
+.popts button[data-id=""][aria-pressed="true"]{background:var(--card);border-color:var(--line-2);color:var(--soft)}
 /* checklist */
 .chk{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .chk:last-child{border-bottom:0}
@@ -359,7 +367,7 @@ const TABS=[['painel','Painel'],['treino','Treino'],['semana','Semana'],['evoluc
 /* ---------- Estado (guardado no aparelho, como o app de horas) ---------- */
 const KEY='treino-casa-pwa-v1';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
-let st=Object.assign({semana:1,cargas:{},check:{},series:{},hoje:'',dia:null,aba:'painel'},load()||{});
+let st=Object.assign({semana:1,cargas:{},check:{},series:{},hoje:'',dia:null,aba:'painel',plano:{1:'d1',2:'d2',4:'d3',6:'d4'}},load()||{});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
 const today=new Date();
 if(st.hoje!==today.toDateString()){st.series={};st.hoje=today.toDateString();}
@@ -367,8 +375,13 @@ function weekKey(d=new Date()){const x=new Date(d.getFullYear(),d.getMonth(),d.g
   return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
 const cw=()=>st.check[weekKey()]||{};
 const doneCount=()=>DAYS.filter(d=>cw()[d.id]).length;
-const todayDay=()=>DAYS.find(d=>d.wd===today.getDay());
-function nextDay(){for(let i=1;i<=7;i++){const wd=(today.getDay()+i)%7;const d=DAYS.find(x=>x.wd===wd);if(d)return [d,i];}}
+const planOf=wd=>DAYS.find(d=>d.id===st.plano[wd])||null;
+const todayDay=()=>planOf(today.getDay());
+const daysOf=id=>[1,2,3,4,5,6,0].filter(wd=>st.plano[wd]===id).map(wd=>NOMES_SEMANA[wd]);
+// próximo dia com treino marcado na sua semana (de preferência um que ainda não foi feito)
+function nextDay(){let first=null;
+  for(let i=1;i<=7;i++){const d=planOf((today.getDay()+i)%7);if(!d)continue;if(!first)first=[d,i];if(!cw()[d.id])return [d,i];}
+  if(first)return first; return [DAYS.find(d=>!cw()[d.id])||DAYS[0],0];}
 if(!st.dia) st.dia=(todayDay()||DAYS.find(d=>!cw()[d.id])||DAYS[0]).id;
 const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 const $=id=>document.getElementById(id);
@@ -385,14 +398,14 @@ function header(title){
     <span class="pill">${ico('halter')}Semana ${st.semana} de 4</span></div>`;
 }
 function weekStrip(){
-  return `<div class="week">${[1,2,3,4,5,6,0].map(i=>{const d=DAYS.find(x=>x.wd===i);
+  return `<div class="week">${[1,2,3,4,5,6,0].map(i=>{const d=planOf(i);
     return `<div class="wd${d?' train':''}${today.getDay()===i?' today':''}${d&&cw()[d.id]?' ok':''}"><b>${NOMES_SEMANA[i]}</b><i>${d?d.mini:'Folga'}</i></div>`;}).join('')}</div>`;
 }
 function painel(){
   const n=doneCount(), C=2*Math.PI*84, td=todayDay();
   let prox;
   if(td&&!cw()[td.id]) prox={d:td,txt:'Hoje'};
-  else {const [d,i]=nextDay(); prox={d,txt:i===1?'Amanhã':NOMES_SEMANA[d.wd]};}
+  else {const [d,i]=nextDay(); prox={d,txt:i===0?'Quando quiser':i===1?'Amanhã':NOMES_SEMANA[(today.getDay()+i)%7]};}
   const idx=DAYS.indexOf(prox.d);
   const series=Object.values(st.series).reduce((a,arr)=>a+arr.filter(Boolean).length,0);
   return header('Hipertrofia em casa')+`
@@ -406,7 +419,7 @@ function painel(){
       <div><span class="eyebrow">Meta</span><b>4 dias</b></div></div>
   </div>
   ${td&&cw()[td.id]?`<div class="card" style="border-color:#3d6630"><div class="label" style="color:var(--ok)">${ico('check','style="color:var(--ok)"')}Treino de hoje concluído</div><p class="small muted" style="margin-top:6px">Boa! Descanse e se alimente bem.</p></div>`:''}
-  ${!td?`<div class="card warn"><h2>Hoje é dia de descanso</h2><p class="small muted" style="margin-top:4px">A recuperação faz parte do ganho de massa.</p></div>`:''}
+  ${!td?`<div class="card warn"><h2>Hoje é dia de descanso</h2><p class="small muted" style="margin-top:4px">A recuperação faz parte do ganho de massa. Se quiser treinar mesmo assim, escolha qualquer treino na aba Treino.</p></div>`:''}
   <div class="card accent">
     <div class="label">${ico('treino')}Próximo treino · ${prox.txt}</div>
     <p style="margin-top:12px"><span class="big">Dia ${idx+1}</span></p>
@@ -414,15 +427,16 @@ function painel(){
     <p class="small muted" style="margin:4px 0 14px">${prox.d.foco} · ${prox.d.itens.length} exercícios · 40–50 min</p>
     <button class="btn primary" id="start" type="button">Abrir treino</button>
   </div>
-  <div class="card"><div class="label">${ico('semana')}Sua semana</div>${weekStrip()}</div>`;
+  <div class="card"><div class="label">${ico('semana')}Sua semana</div>${weekStrip()}
+    <button class="btn" id="editw" type="button" style="margin-top:12px;width:100%">Mudar os dias da semana</button></div>`;
 }
-function bindPainel(){const b=$('start');if(b)b.onclick=()=>{const td=todayDay();
+function bindPainel(){const e=$('editw');if(e)e.onclick=()=>go('semana');const b=$('start');if(b)b.onclick=()=>{const td=todayDay();
   let d=(td&&!cw()[td.id])?td:nextDay()[0]; st.dia=d.id; go('treino');};}
 
 function treino(){
   const d=DAYS.find(x=>x.id===st.dia), idx=DAYS.indexOf(d), feito=!!cw()[d.id];
   return header('Treino')+`
-  <div class="chips" role="group" aria-label="Escolha o dia">${DAYS.map((x,i)=>`<button type="button" class="chip" data-d="${x.id}" aria-pressed="${x.id===d.id}">Dia ${i+1}<small>${x.dia}</small></button>`).join('')}</div>
+  <div class="chips" role="group" aria-label="Escolha o dia">${DAYS.map((x,i)=>`<button type="button" class="chip" data-d="${x.id}" aria-pressed="${x.id===d.id}">Dia ${i+1}<small>${daysOf(x.id).join(', ')||'Livre'}</small></button>`).join('')}</div>
   <div class="card accent"><div class="label">${d.foco}</div><h2 style="margin-top:8px;font-size:1.25rem">Dia ${idx+1} – ${d.titulo}</h2>
     <p class="small muted" style="margin-top:4px">Marque cada série nas bolinhas. O descanso começa sozinho.</p></div>
   ${d.itens.map(([key,nome,dose,n,tip,rest,peso],i)=>{const sk=d.id+'-'+i,arr=st.series[sk]||[],c=(st.cargas[sk]||{})[st.semana]||'';
@@ -433,7 +447,7 @@ function treino(){
         <div class="exrow"><button type="button" class="btn rest" data-r="${rest}">Descanso ${fmt(rest)}</button>
           <label class="kg">Carga S${st.semana}<input class="num" type="text" inputmode="decimal" placeholder="kg" value="${c}" data-sk="${sk}"></label></div>
       </div></article>`;}).join('')}
-  <button class="btn primary" id="fin" type="button" ${feito?'style="background:var(--ok);border-color:var(--ok);color:#13210d"':''}>${feito?'Treino concluído ✓ (toque para desfazer)':'Concluir treino de '+d.dia.toLowerCase()}</button>`;
+  <button class="btn primary" id="fin" type="button" ${feito?'style="background:var(--ok);border-color:var(--ok);color:#13210d"':''}>${feito?'Treino concluído ✓ (toque para desfazer)':'Concluir treino'}</button>`;
 }
 function bindTreino(){
   document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{st.dia=b.dataset.d;save();render();});
@@ -463,15 +477,28 @@ function concluir(d){setCheck(d.id,true);render();window.scrollTo(0,0);}
 function semana(){
   const n=doneCount();
   return header('Semana')+`
-  <div class="card"><div class="label">${ico('semana')}Divisão semanal</div>${weekStrip()}</div>
+  <div class="card"><div class="label">${ico('semana')}Monte sua semana</div>
+    <p class="small muted" style="margin-top:6px">Escolha qual treino fazer em cada dia. Toque em "Folga" para descansar.</p>
+    <div class="plan">${[1,2,3,4,5,6,0].map(wd=>`<div class="prow"><b>${NOMES_SEMANA[wd]}</b><div class="popts">
+      ${[['','Folga'],...DAYS.map((d,i)=>[d.id,'D'+(i+1)])].map(([id,t])=>`<button type="button" data-wd="${wd}" data-id="${id}" aria-pressed="${(st.plano[wd]||'')===id}" aria-label="${NOMES_SEMANA[wd]}: ${id?'Dia '+t.slice(1):'Folga'}">${t}</button>`).join('')}
+    </div></div>`).join('')}</div>
+    <p class="small" id="plannote" style="margin-top:10px;color:var(--warn)">${planNote()}</p>
+    <p class="small muted" style="margin-top:4px">D1 Pernas A · D2 Superior · D3 Pernas B · D4 Corpo todo</p>
+  </div>
   <div class="card"><div class="label">Checklist semanal</div>
     <div class="bar"><i style="width:${n/4*100}%"></i></div>
     <p class="small muted" style="margin:8px 0 4px">${n}/4 concluídos${n===4?' — semana completa!':''}</p>
     ${DAYS.map(d=>`<button type="button" class="chk${cw()[d.id]?' on':''}" data-d="${d.id}" style="width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left" aria-pressed="${!!cw()[d.id]}">
-      <span class="box">${ico('check')}</span><span>Treino de ${d.dia.toLowerCase()} – ${d.curto}</span></button>`).join('')}
+      <span class="box">${ico('check')}</span><span>Dia ${DAYS.indexOf(d)+1} – ${d.curto}${daysOf(d.id).length?' <small class="muted">('+daysOf(d.id).join(', ')+')</small>':''}</span></button>`).join('')}
     <p class="small muted" style="margin-top:8px">O checklist zera sozinho toda segunda-feira.</p></div>`;
 }
-function bindSemana(){document.querySelectorAll('.chk').forEach(b=>b.onclick=()=>{setCheck(b.dataset.d,!cw()[b.dataset.d]);render();});}
+function planNote(){const faltam=DAYS.filter(d=>!daysOf(d.id).length).map(d=>'Dia '+(DAYS.indexOf(d)+1));
+  const rep=DAYS.filter(d=>daysOf(d.id).length>1).map(d=>'Dia '+(DAYS.indexOf(d)+1));
+  const msg=[];if(faltam.length)msg.push(`Fora da semana: ${faltam.join(', ')}.`);if(rep.length)msg.push(`Repetido: ${rep.join(', ')}.`);
+  return msg.join(' ');}
+function bindSemana(){
+  document.querySelectorAll('.popts button').forEach(b=>b.onclick=()=>{const wd=b.dataset.wd;if(b.dataset.id)st.plano[wd]=b.dataset.id;else delete st.plano[wd];save();render();});
+  document.querySelectorAll('.chk').forEach(b=>b.onclick=()=>{setCheck(b.dataset.d,!cw()[b.dataset.d]);render();});}
 function evolucao(){
   return header('Evolução')+`
   <div class="card"><div class="label">Semana do programa</div>
