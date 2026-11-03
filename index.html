@@ -104,11 +104,12 @@ input.num{width:60px;background:var(--bg);border:1px solid var(--line-2);border-
 @media (max-width:400px){.ex{grid-template-columns:96px minmax(0,1fr);gap:12px}}
 
 /* montar semana */
-.plan{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-.prow{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;align-items:center}
+.plan{display:flex;flex-direction:column;margin-top:8px}
+.prow{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:0}
 .prow b{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase}
-.popts{display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:4px}
-.popts button{border:1px solid var(--line-2);background:var(--card-2);border-radius:9px;padding:8px 0;font-size:.78rem;font-weight:600;color:var(--muted)}
+.popts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.popts button{border:1px solid var(--line-2);background:var(--card-2);border-radius:10px;padding:7px 3px;font-size:.74rem;line-height:1.2;font-weight:600;color:var(--muted);word-break:keep-all;overflow-wrap:normal;min-height:44px}
 .popts button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-2)}
 .popts button[data-id=""][aria-pressed="true"]{background:var(--card);border-color:var(--line-2);color:var(--soft)}
 /* checklist */
@@ -480,10 +481,9 @@ function semana(){
   <div class="card"><div class="label">${ico('semana')}Monte sua semana</div>
     <p class="small muted" style="margin-top:6px">Escolha qual treino fazer em cada dia. Toque em "Folga" para descansar.</p>
     <div class="plan">${[1,2,3,4,5,6,0].map(wd=>`<div class="prow"><b>${NOMES_SEMANA[wd]}</b><div class="popts">
-      ${[['','Folga'],...DAYS.map((d,i)=>[d.id,'D'+(i+1)])].map(([id,t])=>`<button type="button" data-wd="${wd}" data-id="${id}" aria-pressed="${(st.plano[wd]||'')===id}" aria-label="${NOMES_SEMANA[wd]}: ${id?'Dia '+t.slice(1):'Folga'}">${t}</button>`).join('')}
+      ${[['','Folga'],...DAYS.map(d=>[d.id,d.curto])].map(([id,t])=>`<button type="button" data-wd="${wd}" data-id="${id}" aria-pressed="${(st.plano[wd]||'')===id}" aria-label="${NOMES_SEMANA[wd]}: ${t}">${t}</button>`).join('')}
     </div></div>`).join('')}</div>
     <p class="small" id="plannote" style="margin-top:10px;color:var(--warn)">${planNote()}</p>
-    <p class="small muted" style="margin-top:4px">D1 Pernas A · D2 Superior · D3 Pernas B · D4 Corpo todo</p>
   </div>
   <div class="card"><div class="label">Checklist semanal</div>
     <div class="bar"><i style="width:${n/4*100}%"></i></div>
@@ -492,8 +492,8 @@ function semana(){
       <span class="box">${ico('check')}</span><span>Dia ${DAYS.indexOf(d)+1} – ${d.curto}${daysOf(d.id).length?' <small class="muted">('+daysOf(d.id).join(', ')+')</small>':''}</span></button>`).join('')}
     <p class="small muted" style="margin-top:8px">O checklist zera sozinho toda segunda-feira.</p></div>`;
 }
-function planNote(){const faltam=DAYS.filter(d=>!daysOf(d.id).length).map(d=>'Dia '+(DAYS.indexOf(d)+1));
-  const rep=DAYS.filter(d=>daysOf(d.id).length>1).map(d=>'Dia '+(DAYS.indexOf(d)+1));
+function planNote(){const faltam=DAYS.filter(d=>!daysOf(d.id).length).map(d=>d.curto);
+  const rep=DAYS.filter(d=>daysOf(d.id).length>1).map(d=>d.curto);
   const msg=[];if(faltam.length)msg.push(`Fora da semana: ${faltam.join(', ')}.`);if(rep.length)msg.push(`Repetido: ${rep.join(', ')}.`);
   return msg.join(' ');}
 function bindSemana(){
