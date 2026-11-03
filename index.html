@@ -372,13 +372,13 @@ let st=Object.assign({semana:1,cargas:{},check:{},series:{},hoje:'',dia:null,aba
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
 const today=new Date();
 if(st.hoje!==today.toDateString()){st.series={};st.hoje=today.toDateString();}
-function weekKey(d=new Date()){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));
+function weekKey(d=new Date()){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-x.getDay());
   return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
 const cw=()=>st.check[weekKey()]||{};
 const doneCount=()=>DAYS.filter(d=>cw()[d.id]).length;
 const planOf=wd=>DAYS.find(d=>d.id===st.plano[wd])||null;
 const todayDay=()=>planOf(today.getDay());
-const daysOf=id=>[1,2,3,4,5,6,0].filter(wd=>st.plano[wd]===id).map(wd=>NOMES_SEMANA[wd]);
+const daysOf=id=>[0,1,2,3,4,5,6].filter(wd=>st.plano[wd]===id).map(wd=>NOMES_SEMANA[wd]);
 // próximo dia com treino marcado na sua semana (de preferência um que ainda não foi feito)
 function nextDay(){let first=null;
   for(let i=1;i<=7;i++){const d=planOf((today.getDay()+i)%7);if(!d)continue;if(!first)first=[d,i];if(!cw()[d.id])return [d,i];}
@@ -399,7 +399,7 @@ function header(title){
     <span class="pill">${ico('halter')}Semana ${st.semana} de 4</span></div>`;
 }
 function weekStrip(){
-  return `<div class="week">${[1,2,3,4,5,6,0].map(i=>{const d=planOf(i);
+  return `<div class="week">${[0,1,2,3,4,5,6].map(i=>{const d=planOf(i);
     return `<div class="wd${d?' train':''}${today.getDay()===i?' today':''}${d&&cw()[d.id]?' ok':''}"><b>${NOMES_SEMANA[i]}</b><i>${d?d.mini:'Folga'}</i></div>`;}).join('')}</div>`;
 }
 function painel(){
@@ -423,7 +423,7 @@ function painel(){
   ${!td?`<div class="card warn"><h2>Hoje é dia de descanso</h2><p class="small muted" style="margin-top:4px">A recuperação faz parte do ganho de massa. Se quiser treinar mesmo assim, escolha qualquer treino na aba Treino.</p></div>`:''}
   <div class="card accent">
     <div class="label">${ico('treino')}Próximo treino · ${prox.txt}</div>
-    <p style="margin-top:12px"><span class="big">Dia ${idx+1}</span></p>
+    <p style="margin-top:12px"><span class="big">${prox.d.curto}</span></p>
     <h2 style="margin-top:8px">${prox.d.titulo}</h2>
     <p class="small muted" style="margin:4px 0 14px">${prox.d.foco} · ${prox.d.itens.length} exercícios · 40–50 min</p>
     <button class="btn primary" id="start" type="button">Abrir treino</button>
@@ -437,8 +437,8 @@ function bindPainel(){const e=$('editw');if(e)e.onclick=()=>go('semana');const b
 function treino(){
   const d=DAYS.find(x=>x.id===st.dia), idx=DAYS.indexOf(d), feito=!!cw()[d.id];
   return header('Treino')+`
-  <div class="chips" role="group" aria-label="Escolha o dia">${DAYS.map((x,i)=>`<button type="button" class="chip" data-d="${x.id}" aria-pressed="${x.id===d.id}">Dia ${i+1}<small>${daysOf(x.id).join(', ')||'Livre'}</small></button>`).join('')}</div>
-  <div class="card accent"><div class="label">${d.foco}</div><h2 style="margin-top:8px;font-size:1.25rem">Dia ${idx+1} – ${d.titulo}</h2>
+  <div class="chips" role="group" aria-label="Escolha o dia">${DAYS.map((x,i)=>`<button type="button" class="chip" data-d="${x.id}" aria-pressed="${x.id===d.id}">${x.curto}<small>${daysOf(x.id).join(', ')||'Livre'}</small></button>`).join('')}</div>
+  <div class="card accent"><div class="label">${d.foco}</div><h2 style="margin-top:8px;font-size:1.25rem">${d.curto}</h2><p class="small" style="color:var(--soft);margin-top:2px">${d.titulo}</p>
     <p class="small muted" style="margin-top:4px">Marque cada série nas bolinhas. O descanso começa sozinho.</p></div>
   ${d.itens.map(([key,nome,dose,n,tip,rest,peso],i)=>{const sk=d.id+'-'+i,arr=st.series[sk]||[],c=(st.cargas[sk]||{})[st.semana]||'';
     return `<article class="card ex${arr.filter(Boolean).length===n?' done':''}" data-sk="${sk}">
@@ -480,7 +480,7 @@ function semana(){
   return header('Semana')+`
   <div class="card"><div class="label">${ico('semana')}Monte sua semana</div>
     <p class="small muted" style="margin-top:6px">Escolha qual treino fazer em cada dia. Toque em "Folga" para descansar.</p>
-    <div class="plan">${[1,2,3,4,5,6,0].map(wd=>`<div class="prow"><b>${NOMES_SEMANA[wd]}</b><div class="popts">
+    <div class="plan">${[0,1,2,3,4,5,6].map(wd=>`<div class="prow"><b>${NOMES_SEMANA[wd]}</b><div class="popts">
       ${[['','Folga'],...DAYS.map(d=>[d.id,d.curto])].map(([id,t])=>`<button type="button" data-wd="${wd}" data-id="${id}" aria-pressed="${(st.plano[wd]||'')===id}" aria-label="${NOMES_SEMANA[wd]}: ${t}">${t}</button>`).join('')}
     </div></div>`).join('')}</div>
     <p class="small" id="plannote" style="margin-top:10px;color:var(--warn)">${planNote()}</p>
@@ -489,8 +489,8 @@ function semana(){
     <div class="bar"><i style="width:${n/4*100}%"></i></div>
     <p class="small muted" style="margin:8px 0 4px">${n}/4 concluídos${n===4?' — semana completa!':''}</p>
     ${DAYS.map(d=>`<button type="button" class="chk${cw()[d.id]?' on':''}" data-d="${d.id}" style="width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left" aria-pressed="${!!cw()[d.id]}">
-      <span class="box">${ico('check')}</span><span>Dia ${DAYS.indexOf(d)+1} – ${d.curto}${daysOf(d.id).length?' <small class="muted">('+daysOf(d.id).join(', ')+')</small>':''}</span></button>`).join('')}
-    <p class="small muted" style="margin-top:8px">O checklist zera sozinho toda segunda-feira.</p></div>`;
+      <span class="box">${ico('check')}</span><span>${d.curto}${daysOf(d.id).length?' <small class="muted">('+daysOf(d.id).join(', ')+')</small>':''}</span></button>`).join('')}
+    <p class="small muted" style="margin-top:8px">O checklist zera sozinho todo domingo.</p></div>`;
 }
 function planNote(){const faltam=DAYS.filter(d=>!daysOf(d.id).length).map(d=>d.curto);
   const rep=DAYS.filter(d=>daysOf(d.id).length>1).map(d=>d.curto);
@@ -504,7 +504,7 @@ function evolucao(){
   <div class="card"><div class="label">Semana do programa</div>
     <div class="seg" style="margin-top:12px">${[1,2,3,4].map(w=>`<button type="button" data-w="${w}" aria-pressed="${st.semana===w}">S${w}</button>`).join('')}</div>
     <p class="small muted" style="margin-top:10px">A semana marcada é a que aparece nos cartões do treino. Passe para a próxima a cada 7 dias.</p></div>
-  ${DAYS.map((d,di)=>`<div class="card"><div class="label">Dia ${di+1} · ${d.curto}</div>
+  ${DAYS.map((d,di)=>`<div class="card"><div class="label">${d.curto}</div>
     ${d.itens.map((it,i)=>{const sk=d.id+'-'+i,c=st.cargas[sk]||{};return `<div class="evo-ex"><span class="small" style="font-weight:600">${it[1]}</span>
       <div class="w">${[1,2,3,4].map(w=>`<label class="${w===st.semana?'cur':''}">S${w}<input class="num" type="text" inputmode="decimal" placeholder="kg" value="${c[w]||''}" data-sk="${sk}" data-w="${w}"></label>`).join('')}</div></div>`;}).join('')}
   </div>`).join('')}`;
