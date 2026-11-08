@@ -112,6 +112,15 @@ input.num{width:60px;background:var(--bg);border:1px solid var(--line-2);border-
 .popts button{border:1px solid var(--line-2);background:var(--card-2);border-radius:10px;padding:7px 3px;font-size:.74rem;line-height:1.2;font-weight:600;color:var(--muted);word-break:keep-all;overflow-wrap:normal;min-height:44px}
 .popts button[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-2)}
 .popts button[data-id=""][aria-pressed="true"]{background:var(--card);border-color:var(--line-2);color:var(--soft)}
+/* tempo de descanso */
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rset{display:flex;flex-direction:column;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-2)}
+.rrow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rrow b{display:block;font-size:.92rem;font-weight:600}
+.rrow span{display:block}
+.step{display:flex;align-items:center;gap:6px;flex:none}
+.step .btn{width:40px;height:40px;padding:0;font-size:1.2rem;line-height:1}
+.step output{min-width:48px;text-align:center;font-size:1.15rem;font-weight:600;color:var(--accent-2);font-variant-numeric:tabular-nums}
 /* checklist */
 .chk{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .chk:last-child{border-bottom:0}
@@ -368,7 +377,9 @@ const TABS=[['painel','Painel'],['treino','Treino'],['semana','Semana'],['evoluc
 /* ---------- Estado (guardado no aparelho, como o app de horas) ---------- */
 const KEY='treino-casa-pwa-v1';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
-let st=Object.assign({semana:1,cargas:{},check:{},series:{},hoje:'',dia:null,aba:'painel',plano:{1:'d1',2:'d2',4:'d3',6:'d4'}},load()||{});
+let st=Object.assign({semana:1,cargas:{},check:{},series:{},hoje:'',dia:null,aba:'painel',plano:{1:'d1',2:'d2',4:'d3',6:'d4'},descanso:{pesado:90,leve:60},restOpen:false},load()||{});
+st.descanso=Object.assign({pesado:90,leve:60},st.descanso||{});
+const restFor=r=>r>=90?st.descanso.pesado:st.descanso.leve;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
 const today=new Date();
 if(st.hoje!==today.toDateString()){st.series={};st.hoje=today.toDateString();}
@@ -440,12 +451,26 @@ function treino(){
   <div class="chips" role="group" aria-label="Escolha o dia">${DAYS.map((x,i)=>`<button type="button" class="chip" data-d="${x.id}" aria-pressed="${x.id===d.id}">${x.curto}<small>${daysOf(x.id).join(', ')||'Livre'}</small></button>`).join('')}</div>
   <div class="card accent"><div class="label">${d.foco}</div><h2 style="margin-top:8px;font-size:1.25rem">${d.curto}</h2><p class="small" style="color:var(--soft);margin-top:2px">${d.titulo}</p>
     <p class="small muted" style="margin-top:4px">Marque cada série nas bolinhas. O descanso começa sozinho.</p></div>
+  <div class="card restcard">
+    <div class="rhead"><div><div class="label">Tempo de descanso</div>
+      <p class="small" style="margin-top:6px;color:var(--soft)">Pesados ${fmt(st.descanso.pesado)} · Leves ${fmt(st.descanso.leve)}</p></div>
+      <button type="button" class="btn" id="restToggle" aria-expanded="${st.restOpen}">${st.restOpen?'Fechar':'Alterar'}</button></div>
+    ${st.restOpen?`<div class="rset">
+      ${[['pesado','Exercícios pesados','agachamentos, afundos, remadas, stiff, supino…'],['leve','Exercícios leves','caneleira, braços, abdômen…']].map(([k,t,sub])=>`<div class="rrow">
+        <div style="min-width:0"><b>${t}</b><span class="small muted">${sub}</span></div>
+        <div class="step"><button type="button" class="btn" data-k="${k}" data-v="-15" aria-label="Menos 15 segundos em ${t}">−</button>
+        <output>${fmt(st.descanso[k])}</output>
+        <button type="button" class="btn" data-k="${k}" data-v="15" aria-label="Mais 15 segundos em ${t}">+</button></div></div>`).join('')}
+      <p class="small muted">Muda de 15 em 15 segundos (de 0:15 até 5:00).</p>
+      <button type="button" class="btn ghost" id="restReset">Voltar ao padrão (1:30 e 1:00)</button>
+    </div>`:''}
+  </div>
   ${d.itens.map(([key,nome,dose,n,tip,rest,peso],i)=>{const sk=d.id+'-'+i,arr=st.series[sk]||[],c=(st.cargas[sk]||{})[st.semana]||'';
     return `<article class="card ex${arr.filter(Boolean).length===n?' done':''}" data-sk="${sk}">
       <div class="figslot" data-key="${key}" data-nome="${nome}"></div>
       <div class="exb"><h3><span>${i+1}.</span> ${nome}</h3><p class="dose">${dose}</p><span class="tag">${peso}</span><p class="tip">${tip}</p>
-        <div class="sets">${Array.from({length:n},(_,s)=>`<button type="button" class="set${arr[s]?' on':''}" data-s="${s}" data-n="${n}" data-r="${rest}" aria-pressed="${!!arr[s]}" aria-label="Série ${s+1}">${s+1}</button>`).join('')}</div>
-        <div class="exrow"><button type="button" class="btn rest" data-r="${rest}">Descanso ${fmt(rest)}</button>
+        <div class="sets">${Array.from({length:n},(_,s)=>`<button type="button" class="set${arr[s]?' on':''}" data-s="${s}" data-n="${n}" data-r="${restFor(rest)}" aria-pressed="${!!arr[s]}" aria-label="Série ${s+1}">${s+1}</button>`).join('')}</div>
+        <div class="exrow"><button type="button" class="btn rest" data-r="${restFor(rest)}">Descanso ${fmt(restFor(rest))}</button>
           <label class="kg">Carga S${st.semana}<input class="num" type="text" inputmode="decimal" placeholder="kg" value="${c}" data-sk="${sk}"></label></div>
       </div></article>`;}).join('')}
   <button class="btn primary" id="fin" type="button" ${feito?'style="background:var(--ok);border-color:var(--ok);color:#13210d"':''}>${feito?'Treino concluído ✓ (toque para desfazer)':'Concluir treino'}</button>`;
@@ -459,6 +484,10 @@ function bindTreino(){
     card.classList.toggle('done',arr.filter(Boolean).length===n);
     if(arr[s]&&s<n-1)startTimer(+b.dataset.r);});
   document.querySelectorAll('.rest').forEach(b=>b.onclick=()=>startTimer(+b.dataset.r));
+  $('restToggle').onclick=()=>{st.restOpen=!st.restOpen;save();render();};
+  document.querySelectorAll('.step button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;
+    st.descanso[k]=Math.min(300,Math.max(15,st.descanso[k]+(+b.dataset.v)));save();render();});
+  const rr=$('restReset');if(rr)rr.onclick=()=>{st.descanso={pesado:90,leve:60};save();render();};
   document.querySelectorAll('input.num').forEach(inp=>inp.oninput=()=>{setCarga(inp.dataset.sk,st.semana,inp.value);});
   $('fin').onclick=()=>{
     if(cw()[st.dia]){setCheck(st.dia,false);render();return;}
@@ -518,7 +547,7 @@ function dicas(){
   <div class="card"><div class="label">Como executar para ganhar massa</div>
   <ul class="list" style="margin-top:12px">
     <li><b>Aquecimento:</b> 5 a 8 minutos antes de cada treino.</li>
-    <li><b>Descanso:</b> 90 a 120 segundos nos exercícios pesados e 60 a 90 segundos nos isolados.</li>
+    <li><b>Descanso:</b> 90 a 120 segundos nos exercícios pesados e 60 a 90 segundos nos isolados. Você pode mudar o tempo na aba Treino, em "Tempo de descanso".</li>
     <li><b>Carga:</b> escolha um peso que torne as últimas 2 ou 3 repetições difíceis, mas sem perder a execução.</li>
     <li><b>Progressão:</b> quando completar todas as repetições com facilidade, aumente um pouco o peso.</li>
     <li><b>Alimentação:</b> consuma proteína suficiente e mantenha uma alimentação adequada ao seu objetivo.</li>

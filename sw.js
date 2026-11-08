@@ -1,4 +1,4 @@
-const CACHE = 'treino-casa-v5';
+const CACHE = 'treino-casa-v6';
 const ARQUIVOS = ['./', './index.html', './manifest.json', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
